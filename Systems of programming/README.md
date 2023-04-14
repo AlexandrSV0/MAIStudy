@@ -4,3 +4,5 @@ The legend says that it's better to bypass the side this subject to stay your mi
 Здоровья всем тем, кто столкнется с этими лабами...
 
 И да, отчеты выглядят страшно, очень страшно. Но таковы требования.
+
+Лабораторные работы по курсу Системы программирования / СП / SP / Systems of programming.
