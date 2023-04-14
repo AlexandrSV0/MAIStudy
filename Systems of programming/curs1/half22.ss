@@ -1,0 +1,58 @@
+;half22 for 206
+(define (root a b)
+ (define temp 0)
+ (set! temp (half-interval a b (f a)(f b)))
+  (display"Total number of iteranions=")
+  (display total-iterations)(newline)
+ (display"[")
+ (display a)
+ (display" , ")
+ (display b)
+ (display"]")
+      temp 
+)
+(define (half-interval a b fa fb)
+ (define root 0)
+ (set! total-iterations 0)
+   (set! root(cond((not(or(not (< fa 0))(not (< 0 fb))))
+                 (try a b))
+         ((not(or(not (< 0 fa))(not (< fb 0))))
+                 (try b a))
+         (#t (+ b 1)))
+    )
+  (newline)
+  root
+) 
+(define(try neg-point pos-point)
+ (define midpoint 0)
+ (define test-value 0)
+     (set! midpoint (average neg-point pos-point))
+     (display "+")
+     (set! total-iterations (+ total-iterations 1))
+     (cond((close-enough? neg-point pos-point) midpoint)
+        (#t (set! test-value (f midpoint))
+               (cond((< 0 test-value)(try neg-point midpoint))
+                    ((< test-value 0)(try midpoint pos-point))
+                    (#t midpoint))
+         ) ;let
+     ) ;if
+)
+(define (close-enough? x y)
+  (<(abs (- x y))tolerance))
+(define (average x y)(*(+ x y)(/ (* 2))))
+
+(define tolerance 1e-3)
+(define total-iterations 0)
+(define(f z)
+  (- z
+     (expt (- z 2) 3)
+     (atan z)
+     8e-1)
+)
+
+(cond((< e 0) 1)((= e 0) 2)((< 0 e) 3))
+
+ (display"Variant 206-21\n")
+;      a  b
+ (root 1 151e-2)
+ (display"(c) Aleksandr Semin 2022\n")
