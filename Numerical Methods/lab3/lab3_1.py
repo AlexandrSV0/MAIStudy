@@ -5,21 +5,18 @@ def f(x):
     return math.acos(x) + x
 
 # строит интерполяционный многочлен Лагранжа
-def Lagrange_interpolation(x, y, x_checking):
-    assert len(x) == len(y)
-    
+def Lagrange_interpolation(x, y, x_checking):    
     polynom_str = 'L(x) ='
     polynom_result_value = 0  # = L(x*)
     
-    for i in range(len(x)):
+    for i in range(len(x)): # сумма f_i * <произведения>
         i_polynom_part_srt = '' 
         i_checking_point = 1
         i_denom = 1
 
-        for j in range(len(x)):
+        for j in range(len(x)): # произведения (x - x_j) / (x_i - x_j), i != j
             if i == j:
                 continue
-
             i_polynom_part_srt += f'(x-{x[j]:.2f})'
             i_checking_point *= (x_checking - x[j])
             i_denom *= (x[i] - x[j])
@@ -29,19 +26,25 @@ def Lagrange_interpolation(x, y, x_checking):
 
     return polynom_str, polynom_result_value
 
-# строит интерполяционный многочлен Ньютона
-def Newton_interpolation(x, y, x_checking):
-    assert len(x) == len(y)
-    # находим разделенные разности, коэфф-ты многочлена
+# вычисляет разделенные разности для многочлена Ньютона
+# [служат как коэффициенты]
+def separated_differences(x, y):
     n = len(x)
     coefs = [y[i] for i in range(n)]
 
     for i in range(1, n):
         for j in range(n - 1, i - 1, -1):
             coefs[j] = float(coefs[j] - coefs[j - 1]) / float(x[j] - x[j - i])
+    return coefs
 
+# строит интерполяционный многочлен Ньютона
+def Newton_interpolation(x, y, x_checking):
+    # находим разделенные разности, коэфф-ты многочлена
+    n = len(x)
+    coefs = separated_differences(x,y)
+    
     polynom_str = 'P(x) = '
-    polynom_result_value = 0  # = P(x*)
+    polynom_result_value = 0  # P(x*)
     i_multiplies_str = ''
     i_multiplies = 1
 
@@ -51,7 +54,7 @@ def Newton_interpolation(x, y, x_checking):
         if i == 0:
             polynom_str += f'{coefs[0]:.2f}'
         else:
-            polynom_str += ' + ' + i_multiplies_str + '*' + f'{coefs[i]:.2f}'
+            polynom_str += ' + ' + f'{coefs[i]:.2f}'+'*' + i_multiplies_str
 
         i_multiplies *= (x_checking - x[i])
         i_multiplies_str += f'(x-{x[i]:.2f})'
@@ -74,6 +77,7 @@ if __name__ == '__main__':
     print('Полином A)')
     print(lagrange_polynom_a)
     print('Погрешность =', abs(polynom_value_a - polynom_expected_value))
+    
     print('Полином B)')
     print(lagrange_polynom_b)
     print('Погрешность =', abs(polynom_value_b - polynom_expected_value))
@@ -83,7 +87,6 @@ if __name__ == '__main__':
     
     print('------------------------')
     print('Интерполяционный многочлен Ньютона')
-
     print('Полином A)')
     print(newton_polynom_a)
     print('Погрешность =', abs(polynom_value_a - polynom_expected_value))

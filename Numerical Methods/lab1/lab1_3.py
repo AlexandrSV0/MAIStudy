@@ -2,15 +2,17 @@ import numpy as np
 
 EPS = 0.000000001
 
+# вычисляет норму ||X||,
+# где Х - матрица/вектор
 def calc_norm(X):
-    # ||X|| L1, где Х - матрица или вектор
     n = X.shape[0]
    
     if type(X[0]) == np.ndarray:
-        l2_norm = abs(X[0][0])
+        l2_norm = abs(X[0][0])    
         for i in range(n):
             for j in range(n):
                 l2_norm = max(abs(X[i][j]), l2_norm)
+    
     else:  #вектор
         l2_norm = abs(X[0])
         for i in range(n):
@@ -19,8 +21,8 @@ def calc_norm(X):
     return l2_norm
 
 
+# Итеративный метод решения уравнения Ax=b
 def solve_iterative(A, b):
-    # Итеративный метод решения уравнения Ax=b
     n = A.shape[0]
 
     # 1. Ax=b -> x_k = alpha * x_(k-1) + beta
@@ -70,11 +72,11 @@ def seidel_multiplication(B, x, D):
     return res, c
 
 
+# метод Зейделя для решения уравнения Ax=b
+# является модификацией метода простых итераций
 def solve_seidel(A, b):
-    # Метод Зейделя для решения уравнения Ax=b
-    # является модификацией метода простых итераций
     n = A.shape[0]
-
+    
     # 1. Ax=b -> x = alpha * x + beta
     alpha = np.zeros_like(A, dtype='float')
     beta = np.zeros_like(b, dtype='float')
@@ -116,15 +118,15 @@ if __name__ == '__main__':
     A = np.array(A, dtype='float')
     b = [-99, 0, 67, 58]
     
-    solution_yacobi, iters_yacobi = solve_iterative(A, b)
-    solution_seidel, iters_seidel = solve_seidel(A, b)
+    res_yacobi, iters_yacobi = solve_iterative(A, b)
+    res_seidel, iters_seidel = solve_seidel(A, b)
 
     print('-------------')
     print('Метод простых итераций')
-    print(solution_yacobi)
+    print(res_yacobi)
     print('Итерации:', iters_yacobi)
     
     print('-------------')
     print('Метод Зейделя')
-    print(solution_seidel)
+    print(res_seidel)
     print('Итерации:', iters_seidel)

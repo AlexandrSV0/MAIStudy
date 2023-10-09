@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-from imported.lab1_1 import inverse_matrix
+from imported.lab1_1 import inverse_matr
 
 EPS = 0.00000001
 MAX_ITERS = 100000
@@ -46,7 +46,7 @@ def dg2_dx2(X):
 
 #норма L_inf = max(abs(a))
 def L_inf_norm(a):
-    return max([abs(i) for i in a])
+    return max([abs(x) for x in a])
 
 #вычисляет q для метода итераций
 def calc_q(interval1, interval2):
@@ -78,26 +78,30 @@ def iteration_method(interval1, interval2):
         x_prev = x
     return x, iters_count
 
+# вычисляет матрицу Якоби в точке Х
+def calc_jacobi_matr(x):
+    jacobi = []
+    jacobi.append([df1_dx1(x), df1_dx2(x)])
+    jacobi.append([df2_dx1(x), df2_dx2(x)])
+    return jacobi
+
 #  вычисляет решение системы нелинейных уравнений методом Ньютона 
 def newton_method(interval1, interval2):
     a1, b1 = interval1
     a2, b2 = interval2
     x_prev = [(a1 + b1) / 2, (a2 + b2) / 2]
-    jacobi = []
-    jacobi.append([df1_dx1(x_prev), df1_dx2(x_prev)])
-    jacobi.append([df2_dx1(x_prev), df2_dx2(x_prev)])
-    jacobi_inversed = inverse_matrix(jacobi)
     iters_count = 0
     
     while iters_count < MAX_ITERS:
         iters_count += 1
+        jacobi_inversed = inverse_matr(calc_jacobi_matr(x_prev))
         #x_k+1 = x_k - J^(-1)(x_k) * f(x_k)
         x = x_prev - jacobi_inversed @ np.array([f1(x_prev), f2(x_prev)])
 
         if L_inf_norm([(x[i] - x_prev[i]) for i in range(len(x))]) < EPS:
             break
-
         x_prev = x
+       
     return x, iters_count
 
 def print_result(x, f1, f2):
@@ -108,15 +112,16 @@ if __name__ == "__main__":
     a1, b1 =1, 1.5    
     a2, b2 = 1, 2
     
-    x_newton, i_newton = newton_method((a1, b1), (a2, b2))
     x_iter, i_iter = iteration_method((a1, b1), (a2, b2))
+    x_newton, i_newton = newton_method((a1, b1), (a2, b2))
+    
+    print('-------------')
+    print('Метод итераций')
+    print_result(x_iter, f1, f2)
+    print('Итерации:', i_iter)
     
     print('-------------')
     print('Метод Ньютона')
     print_result(x_newton, f1, f2)
     print('Итерации:', i_newton)
     
-    print('-------------')
-    print('Метод итераций')
-    print_result(x_iter, f1, f2)
-    print('Итерации:', i_iter)

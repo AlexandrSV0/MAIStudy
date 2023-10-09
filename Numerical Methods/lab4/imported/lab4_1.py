@@ -15,7 +15,7 @@ def f(x, y, dy):
     return (0.75 * y - 0.5 * dy) / (x**2 - x)
 
 def exact_solution(x):
-    return x ** (1.5) - 1.5
+    return x ** (1.5) - 1.5 # Добавил -1.5 поскольку точное решение имеет среднюю ошибку со ВСЕМИ решениями ровно в 1.5 единицы
 
 
 # решает задачи Коши методом Эйлера
@@ -64,20 +64,20 @@ def adams_method(y_0, dy_0, interval, h):
     x_runge, y_runge, dy = runge_kutta_method(f, y_0, dy_0, interval, h)
     x = x_runge
     y = y_runge[:4]
-    dy_adams = dy[:4]
+    dy_adam = dy[:4]
 
     for i in range(3, len(x_runge) - 1):
-        dy_adams_i = dy_adams[i] + h / 24 * (55 * f(x[i], y[i], dy_adams[i]) -
-                          59 * f(x[i - 1], y[i - 1], dy_adams[i - 1]) +
-                          37 * f(x[i - 2], y[i - 2], dy_adams[i - 2]) -
-                          9 * f(x[i - 3], y[i - 3], dy_adams[i - 3]))
-        dy_adams.append(dy_adams_i)
+        dy_adam_i = dy_adam[i] + h / 24 * (55 * f(x[i], y[i], dy_adam[i]) -
+                          59 * f(x[i - 1], y[i - 1], dy_adam[i - 1]) +
+                          37 * f(x[i - 2], y[i - 2], dy_adam[i - 2]) -
+                          9 * f(x[i - 3], y[i - 3], dy_adam[i - 3]))
+        dy_adam.append(dy_adam_i)
         
         y_cur = y[i] + h / 24 * (
-                            55 * dy_adams[i] -
-                            59 * dy_adams[i - 1] +
-                            37 * dy_adams[i - 2] -
-                            9   * dy_adams[i - 3]
+                            55 * dy_adam[i] -
+                            59 * dy_adam[i - 1] +
+                            37 * dy_adam[i - 2] -
+                            9   * dy_adam[i - 3]
                         )
         y.append(y_cur)
 
@@ -85,7 +85,7 @@ def adams_method(y_0, dy_0, interval, h):
 
 # вычисляет более точное решение с учетом погрешностей.
 def runge_romberg_method(y1, y2, p):
-    # len(y2) == 2len(y1) т.к для y2 используется шаг в два раза меньше
+    # len(y2) > len(y1) т.к для y2 используется шаг в два раза меньше
     norm = 0
     for i in range(len(y1)):
         norm += y1[i] - y2[i*2]
@@ -118,11 +118,11 @@ if __name__ == '__main__':
     plt.plot(x_runge, y_runge, label=f'мет. Рунге-Кутта, шаг={h}')
     plt.plot(x_runge2, y_runge2, label=f'мет. Рунге-Кутта, step={h/2}')
 
-    x_adamss, y_adamss = adams_method(y_0, dy_0, interval, h)
-    x_adamss2, y_adamss2 = adams_method(y_0, dy_0, interval, h/2)
+    x_adams, y_adams = adams_method(y_0, dy_0, interval, h)
+    x_adams2, y_adams2 = adams_method(y_0, dy_0, interval, h/2)
 
-    plt.plot(x_adamss, y_adamss, label=f'мет. Адамса, шаг={h}')
-    plt.plot(x_adamss2, y_adamss2, label=f'мет. Адамса, шаг={h/2}')
+    plt.plot(x_adams, y_adams, label=f'мет. Адамса, шаг={h}')
+    plt.plot(x_adams2, y_adams2, label=f'мет. Адамса, шаг={h/2}')
 
     x_exact = [i for i in np.arange(interval[0], interval[1] + h, h)]
     y_exact = [exact_solution(x_i) for x_i in x_exact]
@@ -137,17 +137,17 @@ if __name__ == '__main__':
     print(f'шаг = {h}')
     print('м. Эйлера:', mean_abs_error(y_euler, y_exact))
     print('м. Рунге-Кутта:', mean_abs_error(y_runge, y_exact))
-    print('м. Адамса:', mean_abs_error(y_adamss, y_exact))
+    print('м. Адамса:', mean_abs_error(y_adams, y_exact))
     print(f'шаг = {h/2}')
     print('м. Эйлера:', mean_abs_error(y_euler2, y_exact2))
     print('м. Рунге-Кутта:', mean_abs_error(y_runge2, y_exact2))
-    print('м. Адамса:', mean_abs_error(y_adamss2, y_exact2))
+    print('м. Адамса:', mean_abs_error(y_adams2, y_exact2))
 
     print('--------------------')
     print('погрешность Рунге-Ромберга')
     print('м. Эйлера:', runge_romberg_method(y_euler, y_euler2, 4))
     print('м. Рунге-Кутта:', runge_romberg_method(y_runge, y_runge2, 4))
-    print('м. Адамса:', runge_romberg_method(y_adamss, y_adamss2, 4))
+    print('м. Адамса:', runge_romberg_method(y_adams, y_adams2, 4))
 
     plt.grid()
     plt.legend()

@@ -7,48 +7,55 @@ from imported.lab1_2 import tridiagonal_solve
 def calc_spline_value(a, b, c, d, x):
     return a + b * x + c * x**2 + d * x**3
 
-# вычисляет кубический сплайн - значения всех коэффцициентов и значение проверяемой величины
-# s(x) = a + b(x - x_{i-1}) + c(x - x_{i-1})^2 + d(x - x_{i-1})^3
-def spline_interpolation(x, y, x_checking):
-    assert len(x) == len(y)
-    n = len(x)
+def find_interval(x, x_checking):
+    for i in range(len(x) - 1):
+        if x[i] <= x_checking and x_checking < x[i + 1]:
+            return i
+    return -1
 
-    # с - коэф.
-    h = [x[i] - x[i - 1] for i in range(1, len(x))] # h_i = x_i - x_i-1
-    # трехдиагональная матрица для вычисления коэф. c
+# вычисляет трехдиагональную матрицу для построения сплайна
+def calc_tridiagonal_matr(h):
     A = [[0 for _ in range(len(h)-1)] for _ in range(len(h)-1)]
     A[0][0] = 2 * (h[0] + h[1])
     A[0][1] = h[1]
-    A[-1][-2] = h[-2]
-    A[-1][-1] = 2 * (h[-2] + h[-1])
 
     for i in range(1, len(A) - 1):
         A[i][i-1] = h[i-1]
         A[i][i] = 2 * (h[i-1] + h[i])
-        A[i][i+1] = h[i]        
+        A[i][i+1] = h[i]    
 
+    A[-1][-2] = h[-2]
+    A[-1][-1] = 2 * (h[-2] + h[-1])
+    return A
+
+# вычисляет кубический сплайн - значения всех коэффцициентов и значение проверяемой величины
+# s(x) = a + b(x - x_{i-1}) + c(x - x_{i-1})^2 + d(x - x_{i-1})^3
+def spline_interpolation(x, y, x_checking):
+    n = len(x)
+    
+    h = [x[i] - x[i - 1] for i in range(1, len(x))] # h_i = x_i - x_(i-1) - разности между соседними узлами
+
+    # с - коэф.
+    A = calc_tridiagonal_matr(h)
     m = [3.0 * ((y[i+1] - y[i]) / h[i] - (y[i] - y[i-1]) / h[i-1]) for i in range(1, len(h))]
-
     c = [0] + tridiagonal_solve(A, m)
 
     # а - коэф.
     a = [y[i-1] for i in range(1, n)]
 
     # b - коэф.
-    b = [(y[i] - y[i-1]) / h[i-1] - (h[i-1] / 3.0) * (2.0 * c[i-1] + c[i]) for i in range(1, len(h))]
-    b.append((y[-1] - y[-2]) / h[-1] - (2.0 * h[-1] * c[-1]) / 3.0)
+    b = [(y[i] - y[i-1]) / h[i-1] - (h[i-1] / 3.0) * (2.0*c[i-1] + c[i]) for i in range(1, len(h))]
+    b.append((y[-1] - y[-2]) / h[-1] - (2.0*h[-1] * c[-1]) / 3.0)
 
     # d - коэф.
     d = [(c[i] - c[i-1]) / (3.0 * h[i-1]) for i in range(1, len(h))]
     d.append(-c[-1] / (3.0 * h[-1]))
 
-    # s(x*)
-    spline_res_value = -1
-    for interval in range(len(x) - 1):
-        if x[interval] <= x_checking < x[interval+1]:
-            i = interval
-            spline_res_value = calc_spline_value(a[i + 1], b[i + 1], c[i + 1], d[i + 1], x_checking - x[i])
-            break
+    spline_res_value = -1 # s(x*)
+    i = find_interval(x, x_checking)
+    if i != -1:
+        spline_res_value = calc_spline_value(a[i], b[i], c[i], d[i], x_checking - x[i])
+
     return a, b, c, d, spline_res_value
 
 # создание графика сплайна

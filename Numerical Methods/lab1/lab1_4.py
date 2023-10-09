@@ -3,32 +3,34 @@ import copy
 
 EPS = 0.000000000000000001
 
+# находит позицию максимального по модулю элемента в верхнем треугольнике матрицы
 def find_max_upper_element(X):
-    # Находим позицию максимального по модулю элемента в верхнем треугольнике матрицы
-
     n = X.shape[0]
     i_max, j_max = 0, 1
     max_elem = abs(X[0][1])
+    
     for i in range(n):
         for j in range(i + 1, n):
             if abs(X[i][j]) > max_elem:
                 max_elem = abs(X[i][j])
                 i_max = i
                 j_max = j
+    
     return i_max, j_max
 
-
+# норма матрицы
 def matrix_norm(X):
-    n = len(X[0])
     norm = 0
-    for i in range(n):
-        for j in range(i + 1, n):
+    
+    for i in range(len(X[0])):
+        for j in range(i + 1, len(X[0])):
             norm += X[i][j] * X[i][j]
+    
     return np.sqrt(norm)
 
 
+# вычисляет СЗ и СВ с помощью метода вращений
 def rotation_method(A):
-    # Находим СЗ и СВ с помощью метода вращений
 
     n = A.shape[0]
     A_i = np.copy(A)
@@ -76,5 +78,5 @@ if __name__ == '__main__':
     # n = len(A)
     # Q = np.array([vector[i][0] for i in range(n)])
     # print(Q)
-    # print(X @ Q)
+    # print(A @ Q)
     # print(Q * values[0])

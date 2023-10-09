@@ -1,10 +1,12 @@
 import copy
 import numpy as np
-def LU_decomposition(A):
-    # LU_decomposition-разложение: A = L*U, где:
+
+def LU(A):
+    # LU-разложение: A = L*U, где:
     # L - нижне треугольная матрица
     # U - верхне треугольная матрица
-    # LU_decomposition-разложение - модификация метода Гаусса.
+    # LU-разложение - модификация метода Гаусса.
+    
     n = len(A)
     L = np.zeros((n,n))
     U = copy.deepcopy(A)
@@ -17,11 +19,12 @@ def LU_decomposition(A):
         for i in range(k, n):
             for j in range(k - 1, n):
                 U[i][j] = U[i][j] - L[i][k - 1] * U[k - 1][j]
-    return L, U
+    return L, np.array(U)
 
 
-def LU_solve_system(L, U, b):
-    #Ly = b
+#решает систему уравнений Ax =  b с помощью LU-разложения
+def solve_system(L, U, b):
+    # Ly = b
     n = len(L)
     y = np.zeros(n)
     for i in range(n):
@@ -30,7 +33,7 @@ def LU_solve_system(L, U, b):
             sum += L[i][j] * y[j]
         y[i] = (b[i] - sum) / L[i][i]
     
-    #Ux = y 
+    # Ux = y 
     x = [0 for _ in range(n)]
     for i in range(n - 1, -1, -1):
         sum = 0
@@ -46,33 +49,26 @@ def determinant(U):
         det *= U[i][i]
     return det
 
-def inverse_matrix(A):
+def inverse_matr(A):
     n = len(A)
     E = np.eye(n)
-    L, U = LU_decomposition(A)
+    L, U = LU(A)
     A_inversion = []
     for e in E:
-        row_inversion = LU_solve_system(L, U, e)
+        row_inversion = solve_system(L, U, e)
         A_inversion.append(row_inversion)
-    return transpose(np.array(A_inversion))
+    return transpose_matr(np.array(A_inversion))
 
 
-def transpose(matrix):
-    n = len(matrix)
-    m = len(matrix[0])
-    transposed_matrix = np.zeros((m, n))
+def transpose_matr(matr):
+    n = len(matr)
+    m = len(matr[0])
+    matr_T = np.zeros((m, n))
+    
     for i in range(n):
         for j in range(m):
-            transposed_matrix[j, i] = matrix[i, j]
-    return transposed_matrix
-
-def print_matrix(A):
-    n = len(A)
-    m = len(A[0])
-    for i in range(n):
-        for j in range(m):
-            print(f'%6.2f' % A[i][j], end=' ')
-        print()
+            matr_T[j, i] = matr[i, j]
+    return matr_T
 
 if __name__ == '__main__':
     A = [
@@ -83,16 +79,21 @@ if __name__ == '__main__':
     ]
     b = [-126, -42, -115, -67]
     
-    print("LU_decomposition разложение:")
-    L, U = LU_decomposition(A)
+    L, U = LU(A)
+    solution = solve_system(L, U, b)
+    
+    print("LU разложение:")
     print('L:')
-    print_matrix(L)
+    print(L)
     print('U:')
-    print_matrix(U)
+    print(U)
+    
+    print('----------------------')
     print("Решение системы")
-    solution = LU_solve_system(L, U, b)
     print('x:', solution)
+    
+    print('----------------------')
     print("det A =", determinant(U))
     print("Обратная матрица A:")
-    print_matrix(inverse_matrix(A))
-
+    print(inverse_matr(A))
+    # print(inverse_matr(inverse_matr(A)))
