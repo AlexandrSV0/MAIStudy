@@ -60,8 +60,8 @@ def seidel_multiplication(B, x, D):
     # B * x + D для метода Зейделя
     # x_(k+1) = D + Bx_(k+1) + Cx_(k) 
     res = np.copy(x)
-    c = np.copy(B)
-    
+    c = np.copy(B) # модифицированная матрица В
+
     for i in range(B.shape[0]):
         res[i] = D[i]
         for j in range(B.shape[1]):

@@ -1,11 +1,10 @@
 import copy
 import numpy as np
 
+# LU-разложение - модификация метода Гаусса.
 def LU(A):
-    # LU-разложение: A = L*U, где:
     # L - нижне треугольная матрица
     # U - верхне треугольная матрица
-    # LU-разложение - модификация метода Гаусса.
     
     n = len(A)
     L = np.zeros((n,n))
@@ -97,3 +96,4 @@ if __name__ == '__main__':
     print("Обратная матрица A:")
     print(inverse_matr(A))
     # print(inverse_matr(inverse_matr(A)))
+    print(L@U)

@@ -58,17 +58,17 @@ def shooting_method(f, coefs, y0, y1, interval, h):
     _, b = interval
     n_prev, n = 1.2, 1.0
     dy = (y0 - alpha * n_prev) / beta
-    ans_prev = euler_method(f, n_prev, dy, interval, h)
+    x_prev, y_prev = euler_method(f, n_prev, dy, interval, h)[:2]
     dy = (y0 - alpha * n) / beta
-    cur_ans = euler_method(f, n, dy, interval, h)
+    x,y = euler_method(f, n, dy, interval, h)[:2]
 
-    while not_converge(cur_ans[0], cur_ans[1], b, delta, gamma, y1):
-        n, n_prev = get_n(n_prev, n, ans_prev, cur_ans, b, delta, gamma, y1), n
-        ans_prev = cur_ans
+    while not_converge(x, y, b, delta, gamma, y1):
+        n, n_prev = get_n(n_prev, n, (x_prev, y_prev), (x,y), b, delta, gamma, y1), n
+        (x_prev, y_prev) = (x, y)
         dy = (y0 - alpha * n) / beta
-        cur_ans = euler_method(f, n, dy, interval, h)
+        x,y = euler_method(f, n, dy, interval, h)[:2]
 
-    return cur_ans[0], cur_ans[1]
+    return x,y
 
 # конечно-разностный метод для решения краевой задачи для ОДУ 2 порядка
 def finite_difference_method(f_fd, y0, yn, coefs, interval, h):

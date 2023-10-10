@@ -103,9 +103,9 @@ def get_eigen_values_QR(A):
 
 if __name__ == '__main__':
     A = [
-        [6, 5, -6],
-        [4, -6, 9],
-        [-6, 6, 1]
+        [4, 1, -1],
+        [3, -5,2],
+        [-1, -4, -1]
     ]
     A = np.array(A, dtype='float')
     # Q, R = QR(A);

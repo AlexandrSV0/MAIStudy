@@ -18,11 +18,11 @@ def g(x):
     # то представим уравнение в виде x = x - lambda*f(x)
     # для положительного корня lambda = -0.13
     # для отрицательного корня lambda = 0.13
-    return x + 0.13 * f(x)
+    return x - 0.13 * f(x)
     # return (math.tan(x) + 1) / (5 * x)
     
 def dg(x):
-    return 1+ 0.13*df(x)
+    return 1- 0.13*df(x)
     # return (x - math.cos(x) * math.cos(x) * math.tan(x)) / (5 * x * x  * math.cos(x) * math.cos(x)) - 1 / (5 * x * x)
 
 # вычисляет корень f(x) == 0 на интервале методом Итераций
@@ -65,12 +65,12 @@ def print_result(x, f):
     print(f"x = {x:.7f}    |    f(x) = {f(x):.10f}")
 
 if __name__ == "__main__":
-    l_iter, r_iter = 0.2, 1 # для lambda = -0.13
-    # l_iter, r_iter = -1, -0.1 # для lambda = 0.13
+    # l_iter, r_iter = 0.2, 1 # для lambda = -0.13
+    l_iter, r_iter = -1, -0.1 # для lambda = 0.13
     x_iter, i_iter = iteration_method((l_iter, r_iter))
     
-    l_newton, r_newton = 0.3, 0.8 # для lambda = -0.13
-    # l_newton, r_newton = -0.8, -0.3 # для lambda = 0.13
+    # l_newton, r_newton = 0.3, 0.8 # для lambda = -0.13
+    l_newton, r_newton = -0.8, -0.3 # для lambda = 0.13
     x_newton, i_newton = newton_method((l_newton, r_newton))
 
     print('-------------')

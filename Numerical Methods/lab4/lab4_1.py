@@ -23,45 +23,46 @@ def euler_method(f, y_0, dy_0, interval, h):
     a, b = interval
     x = [i for i in np.arange(a, b + h, h)]
     y_res = [y_0]
-    dy = dy_0
+    dy = [dy_0]
 
     for i in range(len(x) - 1):
-        delta_dy = h * f(x[i], y_res[i], dy) # приращение первой производной
-        dy += delta_dy  # новое значение 
-        delta_y = h * dy  # приращение функции 
+        delta_dy = h * f(x[i], y_res[i], dy[i]) # приращение первой производной
+        dy_next = dy[i] + delta_dy
+        delta_y = h * dy_next  # приращение функции 
         y_res.append(y_res[i] + delta_y)
-        
-    return x, y_res
+        dy.append(dy_next)  # новое значение 
+       
+    return x, y_res, dy
 
 # решает задачу Коши методом Рунге-Кутты
 def runge_kutta_method(f, y_0, dy_0, interval, h):
     a, b = interval
     x = [i for i in np.arange(a, b + h, h)]
     y = [y_0]
-    dy = [dy_0]
+    dy = dy_0
 
     for i in range(len(x) - 1):
-        K1 = h * dy[i]
-        L1 = h * f(x[i], y[i], dy[i])
-        K2 = h * (dy[i] + 0.5 * L1)
-        L2 = h * f(x[i] + 0.5 * h, y[i] + 0.5 * K1, dy[i] + 0.5 * L1)
-        K3 = h * (dy[i] + 0.5 * L2)
-        L3 = h * f(x[i] + 0.5 * h, y[i] + 0.5 * K2, dy[i] + 0.5 * L2)
-        K4 = h * (dy[i] + L3)
-        L4 = h * f(x[i] + h, y[i] + K3, dy[i] + L3)
+        K1 = h * dy
+        L1 = h * f(x[i], y[i], dy)
+        K2 = h * (dy + 0.5 * L1)
+        L2 = h * f(x[i] + 0.5 * h, y[i] + 0.5 * K1, dy + 0.5 * L1)
+        K3 = h * (dy + 0.5 * L2)
+        L3 = h * f(x[i] + 0.5 * h, y[i] + 0.5 * K2, dy + 0.5 * L2)
+        K4 = h * (dy + L3)
+        L4 = h * f(x[i] + h, y[i] + K3, dy + L3)
         
         delta_y = (K1 + 2 * K2 + 2 * K3 + K4) / 6
         delta_dy = (L1 + 2 * L2 + 2 * L3 + L4) / 6
         
+        dy += delta_dy
         y.append(y[i] + delta_y)
-        dy.append(dy[i] + delta_dy)
 
-    return x, y, dy
+    return x, y
 
 
 # решает задачу Коши методом Адамса
 def adams_method(y_0, dy_0, interval, h):
-    x_runge, y_runge, dy = runge_kutta_method(f, y_0, dy_0, interval, h)
+    x_runge, y_runge, dy = euler_method(f, y_0, dy_0, interval, h)
     x = x_runge
     y = y_runge[:4]
     dy_adams = dy[:4]
@@ -106,14 +107,14 @@ if __name__ == '__main__':
     interval = (2, 3)  #  [2; 3]
     h = 0.1
 
-    x_euler, y_euler = euler_method(f, y_0, dy_0, interval, h)
-    x_euler2, y_euler2 = euler_method(f, y_0, dy_0, interval, h/2)
+    x_euler, y_euler = euler_method(f, y_0, dy_0, interval, h)[:2]
+    x_euler2, y_euler2 = euler_method(f, y_0, dy_0, interval, h/2)[:2]
     
     plt.plot(x_euler, y_euler, label=f'мет. Эйлер, шаг={h}')
     plt.plot(x_euler2, y_euler2, label=f'мет. Эйлера, шаг={h/2}')
 
-    x_runge, y_runge, _ = runge_kutta_method(f, y_0, dy_0, interval, h)
-    x_runge2, y_runge2, _ = runge_kutta_method(f, y_0, dy_0, interval, h/2)
+    x_runge, y_runge = runge_kutta_method(f, y_0, dy_0, interval, h)
+    x_runge2, y_runge2 = runge_kutta_method(f, y_0, dy_0, interval, h/2)
 
     plt.plot(x_runge, y_runge, label=f'мет. Рунге-Кутта, шаг={h}')
     plt.plot(x_runge2, y_runge2, label=f'мет. Рунге-Кутта, step={h/2}')
