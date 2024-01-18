@@ -76,6 +76,7 @@ if __name__ == '__main__':
 
     print('Итерации:', iters)
     n = len(A)
+    # -------------------
     Q = np.array([vector[i][0] for i in range(n)])
     print(Q)
     print(A @ Q)
