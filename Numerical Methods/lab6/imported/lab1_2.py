@@ -25,7 +25,7 @@ def threediagonal_solve(A, b):
     
     return x
 
-def tridiagonal_solve(a, b, c, d):
+def threediagonal_solve_2(a, b, c, d):
     n = len(a)
     v = [0 for _ in range(n)]
     u =  [0 for _ in range(n)]
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     # b = [30, -31, 108, -114, 124]
     b = [0, 5, 19, -17, 23]
 
-    x = tridiagonal_solve(A, b)
+    x = threediagonal_solve(A, b)
 
     print('Решение уравнения методом прогонки')
     print(x)

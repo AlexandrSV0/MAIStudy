@@ -35,12 +35,12 @@ h = (0.1, 0.01, 0.001)
 if __name__ == '__main__':
     x = [np.arange(borders[0], borders[1] + hi, hi) for hi in h]
     y_correct = [f(xi) for xi in x]
-    y = [finite_differrence(cond1, cond2, equation, borders, hi, accuracy=2) for hi in h]
+    y = [finite_differrence(cond1, cond2, equation, borders, hi, approx=2) for hi in h]
 
     for i in range(len(h)):
-        print(f'MSE с шагом h = {h[i]}: {mean_squared_error(y[i], y_correct[i])}')
+        print(f'MSE with step h = {h[i]}: {mean_squared_error(y[i], y_correct[i])}')
 
-    plt.plot(x[2], y_correct[2], label='Истинные значения')
+    plt.plot(x[2], y_correct[2], label='Exact solution')
     for i in range(len(x)):
         plt.plot(x[i], y[i], label='h = '+str(h[i]))
     plt.legend()

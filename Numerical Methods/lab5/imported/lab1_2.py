@@ -25,7 +25,7 @@ def threediagonal_solve(A, b):
     
     return x
 
-def tridiagonal_solve(a, b, c, d):
+def threediagonal_solve(a, b, c, d):
     n = len(a)
     v = [0 for _ in range(n)]
     u =  [0 for _ in range(n)]
@@ -35,7 +35,8 @@ def tridiagonal_solve(a, b, c, d):
     for i in range(1, n):
         v[i] = -c[i] / (b[i] + a[i] * v[i - 1])
         u[i] = (d[i] - a[i] * u[i - 1]) / (b[i] + a[i] * v[i - 1])
-
+    v[-1] = 0
+    
     x =  [0 for _ in range(n)]
     x[-1] = u[-1]
 
@@ -43,7 +44,24 @@ def tridiagonal_solve(a, b, c, d):
         x[i] = v[i] * x[i + 1] + u[i]
 
     return x
+    # n = len(A)
+    # # Step 1. Forward
+    # v = [0 for _ in range(n)]
+    # u = [0 for _ in range(n)]
+    # v[0] = A[0][1] / -A[0][0]
+    # u[0] = b[0] / A[0][0]
+    # for i in range(1, n-1):
+    #     v[i] = A[i][i+1] / (-A[i][i] - A[i][i-1] * v[i-1])
+    #     u[i] = (A[i][i-1] * u[i-1] - b[i]) / (-A[i][i] - A[i][i-1] * v[i-1])
+    # v[n-1] = 0
+    # u[n-1] = (A[n-1][n-2] * u[n-2] - b[n-1]) / (-A[n-1][n-1] - A[n-1][n-2] * v[n-2])
 
+    # # Step 2. Backward
+    # x = [0 for _ in range(n)]
+    # x[n-1] = u[n-1]
+    # for i in range(n-1, 0, -1):
+    #     x[i-1] = v[i-1] * x[i] + u[i-1]
+    # return x
 
 if __name__ == "__main__":
     A = [
@@ -57,7 +75,7 @@ if __name__ == "__main__":
     # b = [30, -31, 108, -114, 124]
     b = [0, 5, 19, -17, 23]
 
-    x = tridiagonal_solve(A, b)
+    x = threediagonal_solve(A, b)
 
     print('Решение уравнения методом прогонки')
     print(x)
